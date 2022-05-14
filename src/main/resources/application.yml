@@ -1,0 +1,20 @@
+server:
+    port: 5000
+
+spring:
+    datasource:
+        url: jdbc:sqlserver://localhost:1433;database=chatbot;
+        username: sa
+        password: Act1vate#
+        driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    jpa:
+        hibernate:
+            dialect: org.hibernate.dialect.SQLServer2012Dialect
+            ddl-auto: update
+
+
+flyway:
+    url: jdbc:sqlserver://localhost:1433;database=chatbot
+    schemas: dbo
+    user: sa
+    password: Act1vate#
