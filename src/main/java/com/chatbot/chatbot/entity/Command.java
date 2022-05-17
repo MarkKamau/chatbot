@@ -1,5 +1,6 @@
 package com.chatbot.chatbot.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -10,6 +11,8 @@ import javax.persistence.*;
 @Table(name="command")
 @NoArgsConstructor
 @RequiredArgsConstructor
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(discriminatorType = DiscriminatorType.STRING, name = "type")
 public class Command {
 
     @Id
@@ -21,11 +24,6 @@ public class Command {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "employee")
     private Employee employee;
-
-    @NonNull
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "client")
-    private Client client;
 
     @NonNull
     @Column(name = "wait_time")

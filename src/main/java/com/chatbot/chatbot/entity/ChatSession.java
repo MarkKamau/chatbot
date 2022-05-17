@@ -37,10 +37,12 @@ public class ChatSession {
     private Command currentCommand;
 
     public Long getTimeInSession() {
-        return Duration.between(dateStarted, LocalDateTime.now()).toMinutes();
+        timeInSession= Duration.between(dateStarted, LocalDateTime.now()).toMinutes();
+        return timeInSession;
     }
 
     public Optional<Command> getCurrentCommand(){
-       return client.getCommands().stream().filter(command -> (command.getWaitTime()==timeInSession)).findAny();
+        Optional<Command> optionalCommand= client.getCommands().stream().filter(command -> (command.getWaitTime()==getTimeInSession())).findAny();
+       return optionalCommand;
     }
 }
