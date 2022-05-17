@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +36,14 @@ public class ChatSessionServiceImpl implements  ChatSessionService{
     public long timeInSession(Long clientId) throws Exception {
         Client client=clientService.findClientById(clientId).orElseThrow(() -> new Exception("Client nto found"));
         ChatSession chatSession= chatSessionRepository.findChatSessionByClient(client).orElseThrow(() -> new Exception("Client has no active session"));
-        return Duration.between(chatSession.getDateStarted(), LocalDateTime.now()).toMinutes();
+        return chatSession.getTimeInSession();
+    }
+
+    public List<ChatSession> getActiveChatSessions(){
+        return chatSessionRepository.
+                findAll()
+                    .stream()
+                        .filter(chatSession -> chatSession.getCurrentCommand().isPresent())
+                            .collect(Collectors.toList());
     }
 }

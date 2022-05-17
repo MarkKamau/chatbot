@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CommandServiceimpl implements  CommandService{
@@ -30,18 +31,21 @@ public class CommandServiceimpl implements  CommandService{
 
     private final TemplateService templateService;
 
+    private final ChatSessionService chatSessionService;
+
     private static LocalDateTime startTime=LocalDateTime.now();
 
-    public CommandServiceimpl(CommandRepository commandRepository, ChatRepository chatRepository, ChatService chatService, ClientService clientService, EmployeeService employeeService, TemplateService templateService) {
+    public CommandServiceimpl(CommandRepository commandRepository, ChatRepository chatRepository, ChatService chatService, ClientService clientService, EmployeeService employeeService, TemplateService templateService, ChatSessionService chatSessionService) {
         this.commandRepository = commandRepository;
         this.chatRepository = chatRepository;
         this.chatService = chatService;
         this.clientService = clientService;
         this.employeeService = employeeService;
         this.templateService = templateService;
+        this.chatSessionService = chatSessionService;
     }
 
-    @Scheduled(fixedDelay = 60000)
+    @Scheduled(fixedDelay = 10000)
     @Override
     public void initiateCommand() {
         processCommand();
@@ -98,8 +102,10 @@ public class CommandServiceimpl implements  CommandService{
 
     @Override
     public List<Command> getDueComamnds() {
-        Long waitTime = Duration.between(startTime, LocalDateTime.now()).toMinutes();  //timeTokenService.getTimePassed();
-        return commandRepository.findCommandByWaitTime(waitTime);
+        return chatSessionService.getActiveChatSessions()
+                .stream()
+                    .map(chatSession -> chatSession.getCurrentCommand().get())
+                        .collect(Collectors.toList());
     }
 
 

@@ -4,7 +4,9 @@ package com.chatbot.chatbot.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Getter
 @Setter
@@ -28,4 +30,17 @@ public class ChatSession {
     @Column(name = "date_started")
     private LocalDateTime dateStarted;
 
+    @Transient
+    private Long timeInSession;
+
+    @Transient
+    private Command currentCommand;
+
+    public Long getTimeInSession() {
+        return Duration.between(dateStarted, LocalDateTime.now()).toMinutes();
+    }
+
+    public Optional<Command> getCurrentCommand(){
+       return client.getCommands().stream().filter(command -> (command.getWaitTime()==timeInSession)).findAny();
+    }
 }

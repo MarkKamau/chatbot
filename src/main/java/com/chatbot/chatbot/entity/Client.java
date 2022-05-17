@@ -3,6 +3,8 @@ package com.chatbot.chatbot.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -29,5 +31,8 @@ public class Client {
     @NonNull
     @Column(name = "last_name")
     private String lastName;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "client", fetch=FetchType.EAGER)
+    private List<Command> commands=new ArrayList<>();
 
 }

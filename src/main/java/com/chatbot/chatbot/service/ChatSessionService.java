@@ -1,6 +1,8 @@
 package com.chatbot.chatbot.service;
 
-import org.springframework.stereotype.Service;
+import com.chatbot.chatbot.entity.ChatSession;
+
+import java.util.List;
 
 
 public interface ChatSessionService {
@@ -11,5 +13,6 @@ public interface ChatSessionService {
 
     long timeInSession(Long clientId) throws Exception;
 
+    public List<ChatSession> getActiveChatSessions();
 
 }
