@@ -27,7 +27,6 @@ public class ClientServiceImpl implements ClientService{
     }
 
     public Client save(ClientRequest clientRequest){
-
         return clientRepository.save(new Client(clientRequest.getCustomerNumber(), clientRequest.getFirstName(), clientRequest.getLastName()));
     }
 

@@ -14,5 +14,5 @@ import java.time.LocalDateTime;
 public class ChatResponse {
     private ChatSender sender;
     private LocalDateTime dateCreate;
-    private String Chat;
+    private String chat;
 }

@@ -92,7 +92,8 @@ public class CommandServiceimpl implements  CommandService{
     }
 
     private boolean commandIsProcessedForClient(Command command){
-        return chatRepository.findChatByCommand(command).isPresent();
+        List<Chat> chats=chatRepository.findChatByCommand(command).get();
+        return !chats.isEmpty();//chatRepository.findChatByCommand(command).isPresent();
     }
 
     @Override

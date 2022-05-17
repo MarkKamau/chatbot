@@ -16,12 +16,13 @@ import java.util.List;
 public class ChatController {
 
     private final ChatService chatService;
-
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping()
     public void ClientChat(@RequestBody ChatRequest chatRequest){
         chatService.makeChatRequest(chatRequest);
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("client/{clientId}")
     public List<ChatResponse> getClientChat(@PathVariable("clientId") Long clientId){
         return chatService.getClientChat(clientId);

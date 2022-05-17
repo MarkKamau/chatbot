@@ -21,6 +21,7 @@ public class ClientController {
         clientService.save(clientRequest);
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping
     public List<Client> getAll(){
         return clientService.getAllClients();
