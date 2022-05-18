@@ -6,7 +6,6 @@ import com.chatbot.chatbot.repository.ChatSessionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,11 +38,20 @@ public class ChatSessionServiceImpl implements  ChatSessionService{
         return chatSession.getTimeInSession();
     }
 
-    public List<ChatSession> getActiveChatSessions(){
-        return chatSessionRepository.
+    public List<ChatSession> getChatSessionsWithActiveClientCommands(){
+        List<ChatSession> chatSessions= chatSessionRepository.
                 findAll()
-                    .stream()
-                        .filter(chatSession -> chatSession.getCurrentCommand().isPresent())
-                            .collect(Collectors.toList());
+                .stream()
+                .filter(chatSession -> chatSession.getCurrentClientCommand().isPresent())
+                .collect(Collectors.toList());
+
+        return chatSessions;
     }
+
+    public List<ChatSession> getChatSessions(){
+       return  chatSessionRepository.
+                findAll();
+    }
+
+
 }

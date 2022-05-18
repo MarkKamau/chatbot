@@ -26,13 +26,14 @@ public class ProcessBotMessage implements Runnable {
     }
 
     private String constructMessage(Command command){
-        String template = command.getTemplate().getValue();
+/*        String template = command.getTemplate().getValue();
 
         String templateResponse=template.replace("Employee.FirstName", command.getEmployee().getFirstName());
         templateResponse=templateResponse.replace("Employee.LastName", command.getEmployee().getLastName());
         templateResponse=templateResponse.replace("Client.FirstName", command.getClient().getFirstName());
         templateResponse=templateResponse.replace("Client.LastName", command.getClient().getLastName());
-        return templateResponse;
+        return templateResponse;*/
+        return "";
     }
 
     private void sendMessage(String chat){

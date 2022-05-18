@@ -56,7 +56,7 @@ public class ChatServiceImpl implements ChatService{
                 .ifPresent(client ->
                     findLastBotToClientChat(client.getId())
                             .ifPresent(command ->
-                                    saveChat(new Chat(command,chatRequest.getChatMessage(),ChatSender.CLIENT, LocalDateTime.now()))));
+                                    saveChat(new Chat(client,command,chatRequest.getChatMessage(),ChatSender.CLIENT, LocalDateTime.now()))));
     }
 
     public Optional<Command> findLastBotToClientChat(Long clientId){

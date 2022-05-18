@@ -1,6 +1,7 @@
 package com.chatbot.chatbot.entity;
 
 import com.chatbot.chatbot.model.ChatSender;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -18,6 +19,11 @@ public class Chat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
+
+    @NonNull
+    @ManyToOne
+    @JoinColumn(name = "client")
+    private Client client;
 
     @NonNull
     @ManyToOne

@@ -41,8 +41,8 @@ public class ChatSession {
         return timeInSession;
     }
 
-    public Optional<Command> getCurrentCommand(){
-        Optional<Command> optionalCommand= client.getCommands().stream().filter(command -> (command.getWaitTime()==getTimeInSession())).findAny();
-       return optionalCommand;
+    public Optional<Command> getCurrentClientCommand(){
+       Optional<ClientCommand> optionalCommand= client.getClientCommands().stream().filter(clientCommand -> (clientCommand.getWaitTime()==getTimeInSession())).findAny();
+       return optionalCommand.isPresent()? Optional.of((Command) optionalCommand.get()) :Optional.empty();
     }
 }

@@ -16,9 +16,16 @@ import javax.persistence.*;
 public class ClientCommand extends  Command{
 
     public ClientCommand(@NonNull Employee employee, @NonNull Client client, @NonNull Long waitTime, @NonNull String messageType, @NonNull Template template) {
-        super(employee, waitTime, messageType, template);
+        super( waitTime, messageType, template);
         this.client = client;
+        this.employee=employee;
     }
+
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "employee")
+    @JsonIgnore
+    private Employee employee;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "client")

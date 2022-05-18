@@ -20,10 +20,6 @@ public class Command {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @NonNull
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "employee")
-    private Employee employee;
 
     @NonNull
     @Column(name = "wait_time")

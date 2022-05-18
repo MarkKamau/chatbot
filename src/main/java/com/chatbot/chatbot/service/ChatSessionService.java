@@ -13,6 +13,7 @@ public interface ChatSessionService {
 
     long timeInSession(Long clientId) throws Exception;
 
-    public List<ChatSession> getActiveChatSessions();
+    List<ChatSession> getChatSessionsWithActiveClientCommands();
 
+    List<ChatSession> getChatSessions();
 }

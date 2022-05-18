@@ -33,6 +33,6 @@ public class Client {
     private String lastName;
 
     @OneToMany(mappedBy = "client", fetch=FetchType.EAGER)
-    private List<Command> commands=new ArrayList<>();
+    private List<ClientCommand> clientCommands =new ArrayList<>();
 
 }
