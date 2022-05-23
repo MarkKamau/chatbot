@@ -10,12 +10,13 @@ import org.springframework.web.bind.annotation.*;
 public class ChatSessionController {
 
     final ChatSessionService chatSessionService;
-
-    @PostMapping("client/{clientId}/create")
-    public void createChatSession(@PathVariable Long clientId) throws Exception {
+    @CrossOrigin(origins = "http://localhost:4200")
+    @PostMapping("/create")
+    public void createChatSession(@RequestParam Long clientId) throws Exception {
         chatSessionService.createSession(clientId);
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @DeleteMapping("client/{clientId}/delete")
     public void deleteChatSession(@PathVariable Long clientId) throws Exception {
         chatSessionService.deleteSession(clientId);

@@ -1,7 +1,9 @@
 package com.chatbot.chatbot.web;
 
 
-import com.chatbot.chatbot.model.CommandRequest;
+import com.chatbot.chatbot.entity.DefaultCommand;
+import com.chatbot.chatbot.model.ClientCommandRequest;
+import com.chatbot.chatbot.model.DefaultCommandRequest;
 import com.chatbot.chatbot.service.CommandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,8 +18,14 @@ public class CommandController {
 
     final CommandService commandService;
 
-    @PostMapping("create")
-    void create(@RequestBody CommandRequest commandRequest) throws Exception {
-        commandService.save(commandRequest);
+
+    @PostMapping("client/create")
+    void createClientCommand(@RequestBody ClientCommandRequest clientCommandRequest) throws Exception {
+        commandService.createClientCommand(clientCommandRequest);
+    }
+
+    @PostMapping("default/create")
+    void createDefaultCommand(@RequestBody DefaultCommandRequest defaultCommandRequest) throws Exception {
+        commandService.createDefaultCommand(defaultCommandRequest);
     }
 }

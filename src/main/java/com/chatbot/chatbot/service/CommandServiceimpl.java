@@ -2,7 +2,8 @@ package com.chatbot.chatbot.service;
 
 import com.chatbot.chatbot.entity.*;
 import com.chatbot.chatbot.model.ChatSender;
-import com.chatbot.chatbot.model.CommandRequest;
+import com.chatbot.chatbot.model.ClientCommandRequest;
+import com.chatbot.chatbot.model.DefaultCommandRequest;
 import com.chatbot.chatbot.repository.ChatRepository;
 import com.chatbot.chatbot.repository.ClientCommandRepository;
 import com.chatbot.chatbot.repository.DefaultCommandRepository;
@@ -10,10 +11,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -57,18 +55,18 @@ public class CommandServiceimpl implements  CommandService{
 
     private void processDefaultCommand(){
         List<DefaultCommand> defaultCommands= defaultCommandRepository.findAll();
-        List<Client> clients = chatSessionService.getChatSessions()
+        chatSessionService.getChatSessions()
                 .stream()
-                .filter(chatSession ->
+                .forEach(chatSession ->
                                 defaultCommands
                                         .stream()
-                                        .filter(defaultCommand ->
-                                                defaultCommand.getWaitTime()==chatSession.getTimeInSession()).findAny().isPresent()
-
-                        ).map(chatSession -> chatSession.getClient()).collect(Collectors.toList());
-
-        clients.forEach(client -> processDefaultChats(defaultCommands, client));
-
+                                        .forEach(defaultCommand ->
+                                        {
+                                            if (defaultCommand.getWaitTime()==chatSession.getTimeInSession()) {
+                                                processDefaultChats(Arrays.asList(defaultCommand), chatSession.getClient());
+                                            }
+                                        })
+                        );
     }
 
     private void processClientCommand() {
@@ -109,7 +107,7 @@ public class CommandServiceimpl implements  CommandService{
     }
 
     private boolean clientHasResponded(Command command, Client client){
-            return chatRepository.findChatByCommandAndClient(command.getId(), client.getId())
+            return chatRepository.findChatByClient(client.getId())
                     .orElse(Collections.emptyList())
                     .stream()
                     .filter(chat -> chat.getSender().equals(ChatSender.CLIENT))
@@ -143,14 +141,20 @@ public class CommandServiceimpl implements  CommandService{
         //TODO Send and Save message to user number;
     }
 
-    public void save(CommandRequest commandRequest) throws Exception {
-        Client client = clientService.findClientById(commandRequest.getClient()).orElseThrow(() -> new Exception("Client not found"));
-        Employee employee = employeeService.findEmployeeById(commandRequest.getEmployee()).orElseThrow(() -> new Exception("Employee not found"));
-        Template template = templateService.findTemplateById(commandRequest.getTemplate()).orElseThrow(() -> new Exception("Template not found"));
-        clientCommandRepository.save(new ClientCommand(employee, client,commandRequest.getWaitTime(),commandRequest.getMessageType(), template));
+    public void createClientCommand(ClientCommandRequest clientCommandRequest) throws Exception {
+        Client client = clientService.findClientById(clientCommandRequest.getClient()).orElseThrow(() -> new Exception("Client not found"));
+        Employee employee = employeeService.findEmployeeById(clientCommandRequest.getEmployee()).orElseThrow(() -> new Exception("Employee not found"));
+        Template template = templateService.findTemplateById(clientCommandRequest.getTemplate()).orElseThrow(() -> new Exception("Template not found"));
+        clientCommandRepository.save(new ClientCommand(employee, client,clientCommandRequest.getWaitTime(),clientCommandRequest.getMessageType(), template));
     }
 
-    public void update(CommandRequest commandRequest){
+    public void createDefaultCommand(DefaultCommandRequest defaultCommandRequest) throws Exception {
+        Employee employee = employeeService.findEmployeeById(defaultCommandRequest.getEmployee()).orElseThrow(() -> new Exception("Employee not found"));
+        Template template = templateService.findTemplateById(defaultCommandRequest.getTemplate()).orElseThrow(() -> new Exception("Template not found"));
+        defaultCommandRepository.save(new DefaultCommand(employee, defaultCommandRequest.getWaitTime(),defaultCommandRequest.getMessageType(), template));
+    }
+
+    public void update(ClientCommandRequest commandRequest){
         //TODO Should a command be updated?
     }
 

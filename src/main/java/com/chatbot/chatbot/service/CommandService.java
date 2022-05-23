@@ -3,7 +3,8 @@ package com.chatbot.chatbot.service;
 import com.chatbot.chatbot.entity.Client;
 import com.chatbot.chatbot.entity.Command;
 import com.chatbot.chatbot.entity.DefaultCommand;
-import com.chatbot.chatbot.model.CommandRequest;
+import com.chatbot.chatbot.model.ClientCommandRequest;
+import com.chatbot.chatbot.model.DefaultCommandRequest;
 
 import java.util.List;
 
@@ -17,9 +18,10 @@ public interface CommandService {
 
   void processDefaultChats(List<DefaultCommand> dueDefaultCommands, Client client);
 
-  void save(CommandRequest commandRequest) throws Exception;
+  void createClientCommand(ClientCommandRequest commandRequest) throws Exception;
 
-  void update(CommandRequest commandRequest);
+  void createDefaultCommand(DefaultCommandRequest defaultCommandRequest) throws Exception;
 
-  //void processClientCommand();
+  void update(ClientCommandRequest commandRequest);
+
 }
