@@ -15,7 +15,7 @@ import java.util.Optional;
 @Repository
 public interface ChatRepository extends JpaRepository<Chat, Long> {
 
-    @Query("select ch from Chat ch where ch.client.id=?1")
+    @Query("select ch from Chat ch where ch.client.id=?1 ")
     Optional<List<Chat>> findChatByClient(Long clientId);
 
     Optional<List<Chat>> findChatByCommand(Command command);

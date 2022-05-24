@@ -34,4 +34,8 @@ public class Command {
     @JoinColumn(name = "template")
     private Template template;
 
+    @NonNull
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "track")
+    private Track track;
 }

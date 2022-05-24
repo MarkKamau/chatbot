@@ -18,4 +18,6 @@ public class ClientCommandRequest {
     private String messageType;
 
     private Long template;
+
+    private Long track;
 }

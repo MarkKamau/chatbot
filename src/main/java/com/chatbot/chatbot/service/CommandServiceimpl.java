@@ -7,6 +7,7 @@ import com.chatbot.chatbot.model.DefaultCommandRequest;
 import com.chatbot.chatbot.repository.ChatRepository;
 import com.chatbot.chatbot.repository.ClientCommandRepository;
 import com.chatbot.chatbot.repository.DefaultCommandRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class CommandServiceimpl implements  CommandService{
 
     private final ClientCommandRepository clientCommandRepository;
@@ -35,7 +37,9 @@ public class CommandServiceimpl implements  CommandService{
 
     private static LocalDateTime startTime=LocalDateTime.now();
 
-    public CommandServiceimpl(ClientCommandRepository clientCommandRepository, DefaultCommandRepository defaultCommandRepository, ChatRepository chatRepository, ChatService chatService, ClientService clientService, EmployeeService employeeService, TemplateService templateService, ChatSessionService chatSessionService) {
+    private final TrackService trackService;
+
+/*    public CommandServiceimpl(ClientCommandRepository clientCommandRepository, DefaultCommandRepository defaultCommandRepository, ChatRepository chatRepository, ChatService chatService, ClientService clientService, EmployeeService employeeService, TemplateService templateService, ChatSessionService chatSessionService) {
         this.clientCommandRepository = clientCommandRepository;
         this.defaultCommandRepository = defaultCommandRepository;
         this.chatRepository = chatRepository;
@@ -44,7 +48,7 @@ public class CommandServiceimpl implements  CommandService{
         this.employeeService = employeeService;
         this.templateService = templateService;
         this.chatSessionService = chatSessionService;
-    }
+    }*/
 
     @Scheduled(fixedDelay = 10000)
     @Override
@@ -62,7 +66,8 @@ public class CommandServiceimpl implements  CommandService{
                                         .stream()
                                         .forEach(defaultCommand ->
                                         {
-                                            if (defaultCommand.getWaitTime()==chatSession.getTimeInSession()) {
+                                            if (defaultCommand.getWaitTime()==chatSession.getTimeInSession() &&
+                                                    chatSession.getCurrentTrack().getId()==defaultCommand.getTrack().getId()) {
                                                 processDefaultChats(Arrays.asList(defaultCommand), chatSession.getClient());
                                             }
                                         })
@@ -102,15 +107,17 @@ public class CommandServiceimpl implements  CommandService{
         chatService.saveChats(chats);
     }
 
-    private boolean canProcessChat(Command command, Client client){
+    private boolean canProcessChat(Command command, Client client) {
         return !commandIsProcessedForClient(command, client) && !clientHasResponded(command, client);
     }
 
-    private boolean clientHasResponded(Command command, Client client){
+    private boolean clientHasResponded(Command command, Client client)  {
+
+            ChatSession chatSession=chatSessionService.findCurrentClientChatSession(client).get();
             return chatRepository.findChatByClient(client.getId())
                     .orElse(Collections.emptyList())
                     .stream()
-                    .filter(chat -> chat.getSender().equals(ChatSender.CLIENT))
+                    .filter(chat -> chat.getSender().equals(ChatSender.CLIENT) && chat.getCommand().getTrack().getId()==chatSession.getCurrentTrack().getId())
                     .max(Comparator.comparing(Chat::getId)).isPresent();
     }
 
@@ -145,13 +152,15 @@ public class CommandServiceimpl implements  CommandService{
         Client client = clientService.findClientById(clientCommandRequest.getClient()).orElseThrow(() -> new Exception("Client not found"));
         Employee employee = employeeService.findEmployeeById(clientCommandRequest.getEmployee()).orElseThrow(() -> new Exception("Employee not found"));
         Template template = templateService.findTemplateById(clientCommandRequest.getTemplate()).orElseThrow(() -> new Exception("Template not found"));
-        clientCommandRepository.save(new ClientCommand(employee, client,clientCommandRequest.getWaitTime(),clientCommandRequest.getMessageType(), template));
+        Track track = trackService.getTrackById(clientCommandRequest.getTrack()).orElseThrow(() -> new Exception("Track not found"));
+        clientCommandRepository.save(new ClientCommand(employee, client,clientCommandRequest.getWaitTime(),clientCommandRequest.getMessageType(), template, track));
     }
 
     public void createDefaultCommand(DefaultCommandRequest defaultCommandRequest) throws Exception {
         Employee employee = employeeService.findEmployeeById(defaultCommandRequest.getEmployee()).orElseThrow(() -> new Exception("Employee not found"));
         Template template = templateService.findTemplateById(defaultCommandRequest.getTemplate()).orElseThrow(() -> new Exception("Template not found"));
-        defaultCommandRepository.save(new DefaultCommand(employee, defaultCommandRequest.getWaitTime(),defaultCommandRequest.getMessageType(), template));
+        Track track = trackService.getTrackById(defaultCommandRequest.getTrack()).orElseThrow(() -> new Exception("Track not found"));
+        defaultCommandRepository.save(new DefaultCommand(employee, defaultCommandRequest.getWaitTime(),defaultCommandRequest.getMessageType(), template, track));
     }
 
     public void update(ClientCommandRequest commandRequest){

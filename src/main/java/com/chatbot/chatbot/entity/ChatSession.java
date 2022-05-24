@@ -30,11 +30,17 @@ public class ChatSession {
     @Column(name = "date_started")
     private LocalDateTime dateStarted;
 
+    @NonNull
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "track")
+    private Track currentTrack;
+
     @Transient
     private Long timeInSession;
 
     @Transient
     private Command currentCommand;
+
 
     public Long getTimeInSession() {
         timeInSession= Duration.between(dateStarted, LocalDateTime.now()).toMinutes();

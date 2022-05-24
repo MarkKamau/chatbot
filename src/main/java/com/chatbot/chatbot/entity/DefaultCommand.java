@@ -11,8 +11,8 @@ import javax.persistence.*;
 @DiscriminatorValue("DEFAULT-COMMAND")
 public class DefaultCommand  extends  Command{
 
-    public DefaultCommand(@NonNull Employee employee,  @NonNull Long waitTime, @NonNull String messageType, @NonNull Template template) {
-        super( waitTime, messageType, template);
+    public DefaultCommand(@NonNull Employee employee,  @NonNull Long waitTime, @NonNull String messageType, @NonNull Template template, @NonNull Track track) {
+        super( waitTime, messageType, template, track);
         this.employee = employee;
     }
 

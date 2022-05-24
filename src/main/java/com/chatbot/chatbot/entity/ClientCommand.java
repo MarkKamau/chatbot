@@ -15,8 +15,8 @@ import javax.persistence.*;
 @DiscriminatorValue("CLIENT-COMMAND")
 public class ClientCommand extends  Command{
 
-    public ClientCommand(@NonNull Employee employee, @NonNull Client client, @NonNull Long waitTime, @NonNull String messageType, @NonNull Template template) {
-        super( waitTime, messageType, template);
+    public ClientCommand(@NonNull Employee employee, @NonNull Client client, @NonNull Long waitTime, @NonNull String messageType, @NonNull Template template, @NonNull Track track) {
+        super( waitTime, messageType, template, track);
         this.client = client;
         this.employee=employee;
     }
